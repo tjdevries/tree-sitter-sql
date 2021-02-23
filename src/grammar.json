@@ -1,0 +1,277 @@
+{
+  "name": "sql",
+  "rules": {
+    "program": {
+      "type": "SYMBOL",
+      "name": "statement"
+    },
+    "comment": {
+      "type": "PATTERN",
+      "value": "--.*\\n"
+    },
+    "keyword_select": {
+      "type": "PATTERN",
+      "value": "select|SELECT"
+    },
+    "keyword_distinct": {
+      "type": "PATTERN",
+      "value": "distinct|DISTINCT"
+    },
+    "keyword_all": {
+      "type": "PATTERN",
+      "value": "all|ALL"
+    },
+    "keyword_from": {
+      "type": "PATTERN",
+      "value": "from|FROM"
+    },
+    "keyword_where": {
+      "type": "PATTERN",
+      "value": "where|WHERE"
+    },
+    "select": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_select"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "keyword_distinct"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "keyword_all"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "select_expression"
+        }
+      ]
+    },
+    "from": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_from"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "table_expression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "column_def"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "column_def"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "select_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "*"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "select_item"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "select_item"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "select_item": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_identifier"
+        }
+      ]
+    },
+    "table_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "schema_name"
+                },
+                {
+                  "type": "STRING",
+                  "value": "."
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "table_name"
+        }
+      ]
+    },
+    "_identifier": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z_$][0-9a-zA-Z_]*"
+    },
+    "schema_name": {
+      "type": "SYMBOL",
+      "name": "_identifier"
+    },
+    "table_name": {
+      "type": "SYMBOL",
+      "name": "_identifier"
+    },
+    "column_def": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "STRING",
+          "value": "TODO"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "statement": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "select_statement"
+        }
+      ]
+    },
+    "where": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "keyword_where"
+        }
+      ]
+    },
+    "select_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "select"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "from"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "where"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s\\n]"
+    },
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment"
+    }
+  ],
+  "conflicts": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": []
+}
+
