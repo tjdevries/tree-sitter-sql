@@ -109,10 +109,21 @@ module.exports = grammar({
 
 
         _literal: $ => choice(
-          $.number_literal
+            $.number_literal,
+            $.string_literal,
         ),
 
         number_literal: $ => token(DIGITS),
+
+        string_literal: $ => choice(
+            seq("'", "'"),
+            seq("'", $._string_content, "'")
+        ),
+            
+        _string_content: $ => repeat1(
+            // TODO: support escape sequences
+            token.immediate(/[^']+/),
+        ),
 
         statement: $ => choice($.select_statement),
 

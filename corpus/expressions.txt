@@ -1,0 +1,36 @@
+==================
+Empty string literal
+==================
+
+
+SELECT ''
+
+---
+
+(program
+ (statement
+  (select_statement
+   (select
+    (keyword_select)
+    (select_expression
+      (select_item (expression (primary_expression (string_literal))))
+    )))))
+
+
+==================
+Non empty string literal
+==================
+
+
+SELECT 'hello'
+
+---
+
+(program
+ (statement
+  (select_statement
+   (select
+    (keyword_select)
+    (select_expression
+      (select_item (expression (primary_expression (string_literal))))
+    )))))
