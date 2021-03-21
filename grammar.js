@@ -111,7 +111,13 @@ module.exports = grammar({
         _literal: $ => choice(
             $.number_literal,
             $.string_literal,
+            $.true,
+            $.false,
         ),
+
+        true: $ => 'true',
+
+        false: $ => 'false',
 
         number_literal: $ => token(DIGITS),
 

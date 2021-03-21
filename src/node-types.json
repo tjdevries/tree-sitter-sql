@@ -143,11 +143,19 @@
       "required": false,
       "types": [
         {
+          "type": "false",
+          "named": true
+        },
+        {
           "type": "number_literal",
           "named": true
         },
         {
           "type": "string_literal",
+          "named": true
+        },
+        {
+          "type": "true",
           "named": true
         }
       ]
@@ -401,6 +409,10 @@
     "named": true
   },
   {
+    "type": "false",
+    "named": true
+  },
+  {
     "type": "keyword_all",
     "named": true
   },
@@ -422,6 +434,10 @@
   },
   {
     "type": "number_literal",
+    "named": true
+  },
+  {
+    "type": "true",
     "named": true
   }
 ]
