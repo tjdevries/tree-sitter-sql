@@ -1,3 +1,18 @@
+const DIGITS = token(sep1(/[0-9]+/, /_+/))
+const PREC = {
+  COMMA: -1,
+  DECLARATION: 1,
+  COMMENT: 1,
+  ASSIGN: 0,
+  OR: 2,
+  AND: 3,
+  PLUS: 4,
+  REL: 5,
+  TIMES: 6,
+  NOT: 7,
+};
+
+
 module.exports = grammar({
     name: 'sql',
 
@@ -39,6 +54,40 @@ module.exports = grammar({
             $._identifier
         ),
 
+        expression: $ => choice(
+            $.binary_expression,
+            $.primary_expression,
+        ),
+
+        primary_expression: $ => choice(
+            $._literal,
+            $._identifier,
+        ),
+
+        binary_expression: $ => choice(
+          ...[
+          ['>', PREC.REL],
+          ['<', PREC.REL],
+          ['=', PREC.REL],
+          ['<>', PREC.REL],
+          ['!=', PREC.REL],
+          ['<=', PREC.REL],
+          ['>=', PREC.REL],
+          ['AND', PREC.AND],
+          ['OR', PREC.OR],
+          ['+', PREC.PLUS],
+          ['-', PREC.PLUS],
+          ['*', PREC.TIMES],
+          ['/', PREC.TIMES],
+          ['%', PREC.TIMES],
+        ].map(([operator, precedence]) =>
+          prec.left(precedence, seq(
+            field('left', $.expression),
+            field('operator', operator),
+            field('right', $.expression)
+          ))
+        )),
+
         table_expression: $ => seq(
             optional(seq(
                 $.schema_name,
@@ -58,10 +107,18 @@ module.exports = grammar({
             ")"
         ),
 
+
+        _literal: $ => choice(
+          $.decimal_integer_literal
+        ),
+
+        decimal_integer_literal: $ => token(DIGITS),
+
         statement: $ => choice($.select_statement),
 
         where: $ => seq(
-            $.keyword_where
+            $.keyword_where,
+            $.expression
         ),
 
         select_statement: $ => seq(
@@ -84,4 +141,8 @@ function list_of(match, sep, trailing) {
     return trailing
         ? seq(match, any_amount_of(sep, match), optional(sep))
         : seq(match, any_amount_of(sep, match));
+}
+
+function sep1(rule, separator) {
+  return seq(rule, repeat(seq(separator, rule)));
 }
