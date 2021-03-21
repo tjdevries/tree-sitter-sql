@@ -148,7 +148,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_identifier"
+          "name": "expression"
         }
       ]
     },
@@ -709,11 +709,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "decimal_integer_literal"
+          "name": "number_literal"
         }
       ]
     },
-    "decimal_integer_literal": {
+    "number_literal": {
       "type": "TOKEN",
       "content": {
         "type": "TOKEN",
@@ -774,8 +774,16 @@
           "name": "select"
         },
         {
-          "type": "SYMBOL",
-          "name": "from"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "from"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "CHOICE",

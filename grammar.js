@@ -51,7 +51,7 @@ module.exports = grammar({
         ),
 
         select_item: $ => choice(
-            $._identifier
+            $.expression
         ),
 
         expression: $ => choice(
@@ -109,10 +109,10 @@ module.exports = grammar({
 
 
         _literal: $ => choice(
-          $.decimal_integer_literal
+          $.number_literal
         ),
 
-        decimal_integer_literal: $ => token(DIGITS),
+        number_literal: $ => token(DIGITS),
 
         statement: $ => choice($.select_statement),
 
@@ -123,7 +123,7 @@ module.exports = grammar({
 
         select_statement: $ => seq(
             $.select,
-            $.from,
+            optional($.from),
             optional($.where),
         ),
     }

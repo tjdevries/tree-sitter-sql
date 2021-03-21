@@ -97,7 +97,26 @@ SELECT * FROM my_table WHERE x = 10
     (expression
       (binary_expression
         (expression (primary_expression))
-        (expression (primary_expression (decimal_integer_literal)))
+        (expression (primary_expression (number_literal)))
       )
     )
   ))))
+
+
+==================
+Simple expression without FROM
+==================
+
+
+SELECT 10
+
+---
+
+(program
+ (statement
+  (select_statement
+   (select
+    (keyword_select)
+    (select_expression
+      (select_item (expression (primary_expression (number_literal))))
+    )))))
