@@ -53,3 +53,22 @@ SELECT true
     (select_expression
       (select_item (expression (primary_expression (true))))
     )))))
+
+
+==================
+not unary expression
+==================
+
+
+SELECT NOT true
+
+---
+
+(program
+ (statement
+  (select_statement
+   (select
+    (keyword_select)
+    (select_expression
+      (select_item (expression (unary_expression (expression (primary_expression (true))))))
+    )))))

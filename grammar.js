@@ -57,12 +57,18 @@ module.exports = grammar({
         expression: $ => choice(
             $.binary_expression,
             $.primary_expression,
+            $.unary_expression,
         ),
 
         primary_expression: $ => choice(
             $._literal,
             $._identifier,
         ),
+
+        unary_expression: $ => prec.left(PREC.NOT, seq(
+            field('operator', 'NOT'),
+            field('operand', $.expression)
+        )),
 
         binary_expression: $ => choice(
           ...[
@@ -106,7 +112,6 @@ module.exports = grammar({
             "TODO",
             ")"
         ),
-
 
         _literal: $ => choice(
             $.number_literal,
