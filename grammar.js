@@ -1,3 +1,18 @@
+const DIGITS = token(sep1(/[0-9]+/, /_+/))
+const PREC = {
+  COMMA: -1,
+  DECLARATION: 1,
+  COMMENT: 1,
+  ASSIGN: 0,
+  OR: 2,
+  AND: 3,
+  PLUS: 4,
+  REL: 5,
+  TIMES: 6,
+  NOT: 7,
+};
+
+
 module.exports = grammar({
     name: 'sql',
 
@@ -36,8 +51,48 @@ module.exports = grammar({
         ),
 
         select_item: $ => choice(
-            $._identifier
+            $.expression
         ),
+
+        expression: $ => choice(
+            $.binary_expression,
+            $.primary_expression,
+            $.unary_expression,
+        ),
+
+        primary_expression: $ => choice(
+            $._literal,
+            $._identifier,
+        ),
+
+        unary_expression: $ => prec.left(PREC.NOT, seq(
+            field('operator', 'NOT'),
+            field('operand', $.expression)
+        )),
+
+        binary_expression: $ => choice(
+          ...[
+          ['>', PREC.REL],
+          ['<', PREC.REL],
+          ['=', PREC.REL],
+          ['<>', PREC.REL],
+          ['!=', PREC.REL],
+          ['<=', PREC.REL],
+          ['>=', PREC.REL],
+          ['AND', PREC.AND],
+          ['OR', PREC.OR],
+          ['+', PREC.PLUS],
+          ['-', PREC.PLUS],
+          ['*', PREC.TIMES],
+          ['/', PREC.TIMES],
+          ['%', PREC.TIMES],
+        ].map(([operator, precedence]) =>
+          prec.left(precedence, seq(
+            field('left', $.expression),
+            field('operator', operator),
+            field('right', $.expression)
+          ))
+        )),
 
         table_expression: $ => seq(
             optional(seq(
@@ -58,15 +113,39 @@ module.exports = grammar({
             ")"
         ),
 
+        _literal: $ => choice(
+            $.number_literal,
+            $.string_literal,
+            $.true,
+            $.false,
+        ),
+
+        true: $ => 'true',
+
+        false: $ => 'false',
+
+        number_literal: $ => token(DIGITS),
+
+        string_literal: $ => choice(
+            seq("'", "'"),
+            seq("'", $._string_content, "'")
+        ),
+            
+        _string_content: $ => repeat1(
+            // TODO: support escape sequences
+            token.immediate(/[^']+/),
+        ),
+
         statement: $ => choice($.select_statement),
 
         where: $ => seq(
-            $.keyword_where
+            $.keyword_where,
+            $.expression
         ),
 
         select_statement: $ => seq(
             $.select,
-            $.from,
+            optional($.from),
             optional($.where),
         ),
     }
@@ -84,4 +163,8 @@ function list_of(match, sep, trailing) {
     return trailing
         ? seq(match, any_amount_of(sep, match), optional(sep))
         : seq(match, any_amount_of(sep, match));
+}
+
+function sep1(rule, separator) {
+  return seq(rule, repeat(seq(separator, rule)));
 }
